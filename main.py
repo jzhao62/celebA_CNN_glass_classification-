@@ -1,6 +1,5 @@
 """
-Based on the tflearn CIFAR-10 example at:
-https://github.com/tflearn/tflearn/blob/master/examples/images/convnet_cifar10.py
+Based on 198 pictures
 """
 
 from __future__ import division, print_function, absolute_import
