@@ -6,4 +6,4 @@ entend the dataset ／
 Parameter Tuning: learning rate and batch_size ／
 write report
 <br/>
-
+add confusion matrix
