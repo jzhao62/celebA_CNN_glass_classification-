@@ -152,7 +152,7 @@ for i in range(0, len(a4)):
         a4[i] = 0
 
 yy = Y_test.argmax(axis=1)
-class_names = ["dog", "cat"]
+class_names = ["glass", "glassless"]
 
 # Compute confusion matrix
 cnf_matrix = confusion_matrix(yy, a4)
