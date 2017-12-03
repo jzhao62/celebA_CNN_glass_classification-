@@ -138,27 +138,32 @@ model.fit(X_train, Y_train, validation_set=(X_test, Y_test), batch_size=5, n_epo
 
 
 ###################################
-# Generate confusion_matrix
+# Generate confusion matrix
 ###################################
+def generate_confusion_matrix(y_score, y_true):
+    a1 = np.array(y_score)
+    a2 = np.array([0, 1])
+    a3 = a1 * a2
+    a4 = np.array(a3[:, 1])
+    for i in range(0, len(a4)):
+        if(a4[i]>0.5):
+            a4[i] = 1
+        if (a4[i] <= 0.5):
+            a4[i] = 0
+
+    class_names = ["glass", "glassless"]
+
+    # Compute confusion matrix
+    cnf_matrix = confusion_matrix(y_true, a4)
+    np.set_printoptions(precision=2)
+
+    # Plot normalized confusion matrix
+    plt.figure()
+    plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True, title='Normalized confusion matrix')
+    plt.show()
+
 y_score = model.predict(X_test)
-a1 = np.array(y_score)
-a2 = np.array([0, 1])
-a3 = a1 * a2
-a4 = np.array(a3[:, 1])
-for i in range(0, len(a4)):
-    if(a4[i]>0.5):
-        a4[i] = 1
-    if (a4[i] <= 0.5):
-        a4[i] = 0
+y_true = Y_test.argmax(axis=1)
+generate_confusion_matrix(y_score, y_true)
 
-yy = Y_test.argmax(axis=1)
-class_names = ["glass", "glassless"]
 
-# Compute confusion matrix
-cnf_matrix = confusion_matrix(yy, a4)
-np.set_printoptions(precision=2)
-
-# Plot normalized confusion matrix
-plt.figure()
-plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True, title='Normalized confusion matrix')
-plt.show()
