@@ -23,24 +23,42 @@ from tools import *
 ###################################
 
 files_path = './data/train/'
+files_path_test = './data/test/'
 
 glassless_files_path = os.path.join(files_path, 'N*.jpg')
 glass_files_path = os.path.join(files_path, 'Y*.jpg')
 
+glassless_files_path_test = os.path.join(files_path_test, 'N*.jpg')
+glass_files_path_test = os.path.join(files_path_test, 'Y*.jpg')
+
 glassless_files = sorted(glob(glassless_files_path))
 glass_files = sorted(glob(glass_files_path))
 
+glassless_files_test = sorted(glob(glassless_files_path_test))
+glass_files_test = sorted(glob(glass_files_path_test))
+
 n_files = len(glassless_files) + len(glass_files)
+
+n_files_test = len(glassless_files_test) + len(glass_files_test)
+
 print("number of glassless: ", len(glassless_files))
 print("number of glass: ", len(glass_files))
 
+print("number of glassless for test", len(glassless_files_test))
+print("number of glass for test", len(glass_files_test))
 size_image = 64
 
 print("added successfully")
 
 allX = np.zeros((n_files, size_image, size_image, 3), dtype='float64')
 ally = np.zeros(n_files)
+
+allX_test = np.zeros((n_files_test, size_image, size_image, 3), dtype='float64')
+ally_test = np.zeros(n_files_test)
+
 count = 0
+count_test = 0
+
 for f in glassless_files:
     try:
         img = io.imread(f)
@@ -60,6 +78,28 @@ for f in glass_files:
         count += 1
     except:
         continue
+
+for f in glassless_files_test:
+    try:
+        img = io.imread(f)
+        new_img = imresize(img, (size_image, size_image, 3))
+        allX_test[count_test] = np.array(new_img)
+        ally_test[count_test] = 0
+        count_test += 1
+    except:
+        continue
+
+for f in glass_files_test:
+    try:
+        img = io.imread(f)
+        new_img = imresize(img, (size_image, size_image, 3))
+        allX_test[count_test] = np.array(new_img)
+        ally_test[count_test] = 1
+        count_test += 1
+    except:
+        continue
+
+
 
 ###################################
 # Prepare train & test samples
@@ -134,7 +174,7 @@ print("Network build complete")
 ###################################
 # Train model for 10 epochs
 ###################################
-model.fit(X_train, Y_train, validation_set=(X_test, Y_test), batch_size=5, n_epoch=10, show_metric=True)
+model.fit(X_train, Y_train, validation_set=(X_test, Y_test), batch_size=10, n_epoch=5, show_metric=True)
 
 
 ###################################
@@ -165,5 +205,10 @@ def generate_confusion_matrix(y_score, y_true):
 y_score = model.predict(X_test)
 y_true = Y_test.argmax(axis=1)
 generate_confusion_matrix(y_score, y_true)
+
+
+y_score_test = model.predict(allX_test)
+generate_confusion_matrix(y_score_test, ally_test)
+
 
 
